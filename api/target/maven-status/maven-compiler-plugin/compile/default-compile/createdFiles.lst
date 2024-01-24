@@ -1,0 +1,5 @@
+si/fri/rso/aichat/api/v1/ChatMetadataApplication.class
+si/fri/rso/aichat/api/v1/resources/DemoResource.class
+si/fri/rso/aichat/api/v1/resources/ChatMetadataResource.class
+META-INF/services/javax.ws.rs.core.Application
+si/fri/rso/aichat/api/v1/health/CustomHealthCheck.class

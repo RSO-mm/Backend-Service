@@ -1,0 +1,33 @@
+kumuluzee:
+  cors-filter:
+    servlet:
+      enabled: true
+      allow-origin: "*"
+  name: ai-chat-service
+  env:
+    name: dev
+  version: 1.0.0
+  server:
+    base-url: http://localhost:8080
+    http:
+      port: 8080
+  datasources:
+    - jndi-name: jdbc/ChatMetadataDS
+      connection-url: jdbc:postgresql://pg-image-metadata:5432/chat-metadata
+      username: dbuser
+      password: postgres
+      pool:
+        min-size: 0
+        max-size: 2
+  health:
+    checks:
+      data-source-health-check:
+        type: liveness
+        jndi-name: jdbc/ChatMetadataDS
+  metrics:
+    web-instrumentation:
+      - name: chat-endpoint
+        url-pattern: /v1/chat/*
+rest-properties:
+  broken: false
+

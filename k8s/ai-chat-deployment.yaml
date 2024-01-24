@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-chat-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-chat
+  template:
+    metadata:
+      labels:
+        app: ai-chat
+    spec:
+      containers:
+        - image: sivarlapajne/chatimage:latest #to be changed
+          name: ai-chat
+          env:
+            - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+              value: jdbc:postgresql://bubble.db.elephantsql.com:5432/zzhdhhwo  #connection url
+            - name: KUMULUZEE_DATASOURCES0_USERNAME
+              value: zzhdhhwo
+            - name: KUMULUZEE_DATASOURCES0_PASSWORD
+              #value: 6uZIBrBgiVr5t22P4yGrccI148CG9CQr #password
+              valueFrom: #use Kubernetes secret for storing the password
+                secretKeyRef:
+                  name: pg-pass  # Name of the Kubernetes Secret
+                  key: password  # Key to access the password in the Secret
+          ports:
+            - containerPort: 8080
+              name: server
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-chat
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: ai-chat
